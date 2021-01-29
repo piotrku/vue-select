@@ -5,15 +5,24 @@
 <template>
   <div :dir="dir" class="v-select" :class="stateClasses">
     <slot name="header" v-bind="scope.header" />
-    <div :id="`vs${uid}__combobox`" ref="toggle" @mousedown="toggleDropdown($event)" class="vs__dropdown-toggle" role="combobox" :aria-expanded="dropdownOpen.toString()" :aria-owns="`vs${uid}__listbox`" aria-label="Search for option">
-
+    <div
+      :id="`vs${uid}__combobox`"
+      ref="toggle"
+      @mousedown__="toggleDropdown($event)"
+      @click="toggleDropdown($event)"
+      class="vs__dropdown-toggle"
+      role="combobox"
+      :aria-expanded="dropdownOpen.toString()"
+      :aria-owns="`vs${uid}__listbox`"
+      aria-label="Search for option"
+    >
       <div class="vs__selected-options" ref="selectedOptions">
         <slot v-for="option in selectedValue"
-              name="selected-option-container"
-              :option="normalizeOptionForSlot(option)"
-              :deselect="deselect"
-              :multiple="multiple"
-              :disabled="disabled">
+          name="selected-option-container"
+          :option="normalizeOptionForSlot(option)"
+          :deselect="deselect"
+          :multiple="multiple"
+          :disabled="disabled">
           <span :key="getOptionKey(option)" class="vs__selected">
             <slot name="selected-option" v-bind="normalizeOptionForSlot(option)">
               {{ getOptionLabel(option) }}
@@ -53,7 +62,13 @@
       </div>
     </div>
     <transition :name="transition">
-      <ul ref="dropdownMenu" v-if="dropdownOpen" :id="`vs${uid}__listbox`" :key="`vs${uid}__listbox`" class="vs__dropdown-menu" role="listbox" @mousedown.prevent="onMousedown" @mouseup="onMouseUp" tabindex="-1" v-append-to-body>
+      <ul ref="dropdownMenu" v-if="dropdownOpen"
+        :id="`vs${uid}__listbox`"
+        :key="`vs${uid}__listbox`" class="vs__dropdown-menu" role="listbox"
+        @mousedown__.prevent="onMousedown"
+        @click.prevent="onMousedown"
+        @mouseup="onMouseUp" tabindex="-1" v-append-to-body
+      >
         <slot name="list-header" v-bind="scope.listHeader" />
         <li
           role="option"
@@ -65,6 +80,7 @@
           :aria-selected="index === typeAheadPointer ? true : null"
           @mouseover="selectable(option) ? typeAheadPointer = index : null"
           @mousedown.prevent.stop="selectable(option) ? select(option) : null"
+          @click.prevent.stop="select(option)"
         >
           <slot name="option" v-bind="normalizeOptionForSlot(option)">
             {{ getOptionLabel(option) }}
@@ -739,6 +755,8 @@
        * @return {void}
        */
       toggleDropdown (event) {
+        console.log('[vue-select] toggleDropdown');
+
         const targetIsNotSearch = event.target !== this.searchEl;
         if (targetIsNotSearch) {
           event.preventDefault();
@@ -925,6 +943,7 @@
        * @return {void}
        */
       onMousedown() {
+        console.log('[vue-select] onMousedown');
         this.mousedown = true
       },
 
